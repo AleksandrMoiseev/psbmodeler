@@ -33,3 +33,7 @@ apps/pgmodeler/build/*
 apps/pgmodeler-cli/build/*
 apps/pgmodeler-ch/build/*
 apps/pgmodeler-sce/build/*
+apps/pgmodeler/obj/*
+apps/pgmodeler-cli/obj/*
+apps/pgmodeler-ch/obj/*
+apps/pgmodeler-se/obj/*

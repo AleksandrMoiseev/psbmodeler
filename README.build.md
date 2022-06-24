@@ -1,0 +1,79 @@
+# Сборка psbModeler
+Сборка psbModeler из исходного кода.
+
+## Подготовка окружения
+Операционная система Windows XP Pro 64-bit.
+
+ПО|Сайт|Установочный пакет|Путь установки
+---|---|---|---
+7zip 64-bit|[Посетить](https://www.7-zip.org/)|[Загрузить](https://www.7-zip.org/a/7z2107-x64.exe)|По умолчанию
+MSYS2|[Посетить](https://www.msys2.org/)|[Загрузить](https://github.com/msys2/msys2-installer/releases/download/2022-03-19/msys2-x86_64-20220319.exe)|`C:\msys64`
+
+## Сборка pgModeler
+Все команды выполняем в консоли `C:\msys64\msys2_shell.cmd -mingw64`
+### Обновляем систему и устанавливаем пакеты
+```console
+pacman -Suy
+pacman -Suy
+pacman -S base-devel mingw-w64-x86_64-make mingw-w64-x86_64-gcc mingw-w64-x86_64-postgresql mingw-w64-x86_64-qt6 git
+```
+
+| Библиотека | Версия | Комментарий |
+|---|---|---|
+|[mingw-w64-x86_64-make](https://packages.msys2.org/package/mingw-w64-x86_64-make)|4.3|GNU make utility to maintain groups of programs|
+|[mingw-w64-x86_64-gcc](https://packages.msys2.org/package/mingw-w64-x86_64-gcc)|11.2.0|GNU Compiler Collection (C,C++,OpenMP)|
+|[mingw-w64-x86_64-postgresql](https://packages.msys2.org/package/mingw-w64-x86_64-postgresql)|14.2|Libraries for use with PostgreSQL|
+|[mingw-w64-x86_64-qt6...](https://packages.msys2.org/package/)|6.3.0|Packages for Qt6 components|
+|[git](https://packages.msys2.org/base/git)|2.35.3-1|The fast distributed version control system|
+
+### Создаём папку для приложения
+```console
+mkdir c:/psbModeler
+```
+### Создаём папку для исходного кода
+```console
+mkdir c:/repo
+```
+### Загружаем исходный код
+Загружаем исходный код с [Github](https://github.com/AleksandrMoiseev/psbmodeler)
+```console
+cd c:/repo
+git clone https://github.com/AleksandrMoiseev/psbmodeler.git
+# Выбираем версию сборки
+cd c:/repo/psbmodeler
+git checkout dev
+```
+### Выполняем конфигурацию
+```console
+cd c:/repo/psbmodeler
+qmake6 -r CONFIG+=release PREFIX=C:/psbModeler pgmodeler.pro
+```
+### Выполняем компиляцию
+```console
+cd c:/repo/psbmodeler
+make
+```
+### Перемещаем скомпилированные файлы в `C:\psbModeler`
+```console
+cd c:/repo/psbmodeler
+make install
+```
+### Копируем библиотеки в `C:\psbModeler`
+```console
+cd c:/psbModeler
+windeployqt-qt6.exe pgmodeler.exe gui.dll
+cd c:/msys64/mingw64/bin/
+cp libicuin*.dll libicuuc*.dll libicudt*.dll libpcre2-16-0.dll libharfbuzz-0.dll \
+   libpng16-16.dll libfreetype-6.dll libgraphite2.dll libglib-2.0-0.dll libpcre-1.dll \
+   libbz2-1.dll libssl-1_1-x64.dll libcrypto-1_1-x64.dll libgcc_s_seh-1.dll \
+   libstdc++-6.dll libwinpthread-1.dll zlib1.dll libpq.dll libxml2-2.dll liblzma-5.dll \
+   libiconv-2.dll libintl-8.dll libbrotlidec.dll libbrotlicommon.dll \
+   libdouble-conversion.dll libzstd.dll libmd4c.dll libb2-1.dll C:/psbModeler
+```
+## Удаляем файлы созданные в процессе компиляции
+```console
+cd c:/repo/psbmodeler
+git submodule foreach --recursive "git clean -dfx" && git clean -dfx
+```
+## Ссылки на источники
+1. [Сборка pgModeler](https://pgmodeler.io/support/installation)
